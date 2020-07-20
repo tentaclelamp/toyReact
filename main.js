@@ -17,7 +17,9 @@ let a = <MyComponent name="a" id="ida">
   <div>123</div>
   </MyComponent>
 
-
+if(!document.body) {
+  document.body = document.createElement('body');
+}
 ToyReact.render(
   a,
   document.body

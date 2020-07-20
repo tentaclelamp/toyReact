@@ -44,9 +44,8 @@ export class Component {
 
 export let ToyReact = {
   createElement(type, attributes, ...children) {
-    console.log(arguments);
     let element;
-    if(typeof type === "string") 
+    if(!type || typeof type === "string") 
         element = new ElementWrapper(type);
     else
         element = new type;
@@ -68,8 +67,6 @@ export let ToyReact = {
             if(typeof child === "string") {
               child = new TextWrapper(child);
             }
-            console.log(element)
-            debugger;
             element.appendChild(child);
         }
       }
