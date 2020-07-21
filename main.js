@@ -9,8 +9,8 @@ class Square extends Component {
   }
   render() {
     return (
-      <button className="square" onClic={() => this.setState({value: "X"})}>
-          {this.state.value ? this.setState.value : ""}
+      <button className="square" onClick={() => this.setState({value: "X"})}>
+          {this.state.value ? this.state.value : ""}
       </button>
     );
   }
@@ -23,17 +23,17 @@ class Board extends Component {
   render() {
     return (
       <div>
-        <div classname="board-row">
+        <div className="board-row">
             {this.renderSquare(0)}
             {this.renderSquare(1)}
             {this.renderSquare(2)}
         </div>
-        <div classname="board-row">
+        <div className="board-row">
             {this.renderSquare(3)}
             {this.renderSquare(4)}
             {this.renderSquare(5)}
         </div>
-        <div classname="board-row">
+        <div className="board-row">
             {this.renderSquare(6)}
             {this.renderSquare(7)}
             {this.renderSquare(8)}
@@ -43,22 +43,14 @@ class Board extends Component {
   }
 }
 
-class MyComponent extends Component {
-  render() {
-    return <div>
-        <span>hello</span>
-        <span>world!</span>
-        <div>
-          {true}
-          {this.children}
-        </div>
-    </div>
+class MyComponent extends Component{
+  render(){
+    return (<Board></Board>
+    )
   }
 }
 
-let a = <Board name="a" id="ida">
-  <div>123</div>
-  </Board>
+let a = <MyComponent name="a" id="ida"/>
 
 if(!document.body) {
   document.body = document.createElement('body');

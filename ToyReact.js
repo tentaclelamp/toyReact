@@ -41,7 +41,7 @@ class TextWrapper{
 }
 
 export class Component {
-  constructor(type) {
+  constructor() {
     this.children = [];
     this.props = Object.create(null);
   }
@@ -81,14 +81,14 @@ export class Component {
           if(typeof oldState[p] !== "object") {
             oldState[p] = {}
           }
-          merge(oldState[p], newState)
+          merge(oldState[p], newState[p])
         } else {
           oldState[p] = newState[p];
         }
       } 
     }
     if(this.state && state)
-        thi.state = {};
+        this.state = {};
     merge(this.state, state);
     this.update()
   }
@@ -131,7 +131,7 @@ export let ToyReact = {
   render(vdom, element) {
       console.log(vdom)
       let range = document.createRange();
-      if(element.children.range){
+      if(element.children.length){
         range.setStartAfter(element.lastChild);
         range.setEndAfter(element.lastChild);
       } else {
