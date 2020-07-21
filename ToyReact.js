@@ -3,13 +3,29 @@ class ElementWrapper {
     this.root = document.createElement(type);
   }
   setAttribute(name, value) {
+    if(name.match(/^on([\s\S]+)$/)) {
+      let eventName = RegExp.$1.replace(/^[\s\S]/,s => s.toLowerCase());
+      this.root.addEventListener(eventName, value);
+    }
+    if(name === "className") {
+      this.root.setAttribute("class", value);
+    }
     this.root.setAttribute(name, value)
   }
   appendChild(vchild) {
-    vchild.mountTo(this.root);
+    let range = document.createRange();
+    if(this.root.children.length) {
+      range.setStartAfter(this.root.lastChild)
+      range.setEndAfter(this.root.lastChild)
+    } else {
+      range.setStart(this.root, 0);
+      range.setEnd(this.root, 0);
+    }
+    vchild.mountTo(range);
   }
-  mountTo(parent) {
-    parent.appendChild(this.root);
+  mountTo(range) {
+    range.deleteContents();
+    range.insertNode(this.root);
   }
 }
 
@@ -18,26 +34,63 @@ class TextWrapper{
   constructor(content) {
     this.root = document.createTextNode(content)
   }
-  mountTo(parent) {
-    parent.appendChild(this.root);
+  mountTo(range) {
+    range.deleteContents();
+    range.insertNode(this.root);
   }
 }
 
 export class Component {
   constructor(type) {
     this.children = [];
+    this.props = Object.create(null);
   }
 
   setAttribute(name, value) {
+    if(name.match(/^on([\s\S]+)s/)) {
+      console.log(RegExp.$1);
+    }
+    this.props[name] = value;
     this[name] = value;
   }
-  mountTo(parent) {
-    let vdom = this.render();
-    vdom.mountTo(parent);
+  mountTo(range) {
+    this.range = range;
+    this.update()
   }
 
-  appendChild(child) {
-    this.children.push(child);
+  update() {
+    let placeholder = document.createComment("placeholder");
+    let range = document.createRange();
+    range.setStart(this.range.endContainer, this.range.endOffset);
+    range.setEnd(this.range.endContainer, this.range.endOffset);
+    range.insertNode(placeholder);
+
+    this.range.deleteContents();
+
+    let vdom = this.render();
+    vdom.mountTo(this.range);
+  }
+
+  appendChild(vchild) {
+    this.children.push(vchild);
+  }
+  setState(state) {
+    let merge = (oldState, newState) => {
+      for(let p in newState) {
+        if(typeof newState[p] === "object") {
+          if(typeof oldState[p] !== "object") {
+            oldState[p] = {}
+          }
+          merge(oldState[p], newState)
+        } else {
+          oldState[p] = newState[p];
+        }
+      } 
+    }
+    if(this.state && state)
+        thi.state = {};
+    merge(this.state, state);
+    this.update()
   }
 }
 
@@ -76,6 +129,16 @@ export let ToyReact = {
     return element;
   },
   render(vdom, element) {
-      vdom.mountTo(element);
+      console.log(vdom)
+      let range = document.createRange();
+      if(element.children.range){
+        range.setStartAfter(element.lastChild);
+        range.setEndAfter(element.lastChild);
+      } else {
+        range.setStart(element, 0);
+        range.setEnd(element, 0);
+      }
+
+      vdom.mountTo(range);
   },
 }
